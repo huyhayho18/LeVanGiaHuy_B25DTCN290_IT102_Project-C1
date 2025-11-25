@@ -29,7 +29,7 @@ struct Room list[100] = {
 	{"107",1,400000,1},
 	{"201",2,750000,0},
 	{"202",1,400000,1},
-	{"203",2,750000,1},
+	{"203",2,750000,0},
 	{"204",1,400000,1},
 	{"205",2,750000,0},
 	{"206",1,400000,1},
@@ -47,7 +47,9 @@ void display ();
 void add_Room ();
 void update_Room ();
 void lock ();
-void show_list (int n);
+void show_list ();
+void search_room ();
+void sort_room ();
 
 int main () {
 	int choice;
@@ -67,11 +69,13 @@ int main () {
 				lock();
 				break;
 			case 4:
-				show_list(n);
+				show_list();
 				break;
 			case 5:
+				search_room ();
 				break;
 			case 6:
+				sort_room ();
 				break;
 			case 7:
 				break;
@@ -216,30 +220,96 @@ void lock () {
 	printf ("Da dua phong [%s] vao trang thai Bao tri thanh cong!\n",roomId);
 }
 
-void show_list (int n) {
+void show_list () {
+	if (n == 0) {
+		printf ("Danh sach phong hien tai trong! Vui long them phong truoc");
+	} 
 	int page_number = 1;
-    int page_size = 10;             
-    int total_pages = (n + page_size - 1) / page_size;
+    int page_size = 10;   
+	int result = n / page_size;          
+    int total_pages = (n % page_size == 0) ? result : result + 1;
     while (1) {
+    	printf("Moi ban chon so trang can xem (1-%d) : ", total_pages);
+        scanf("%d", &page_number);
     	int start = (page_number-1)*page_size;
         int end = start + page_size;
-        if (end > n) {
-			end = n;
-		}
     	printf("Trang %d/%d :\n\n", page_number, total_pages);
-    	printf("+--------+---------+----------+----------+\n");
-        printf("|%-8s|%-9s|%-10s|%-10s|\n", "So phong", "Loai phong","Gia phong","Trang thai");
-        printf("+--------+---------+----------+----------+\n");
-        for (int i = start; i < end ; i++) {
-        	printf("|%-8s|%-9d|%-10.2lf|%-10d|\n", list[i].roomId, list[i].type, list[i].price, list[i].status);
+    	printf("+--------+-------------------------+--------------------+-----------+\n");
+		printf("|%-5s|%-25s|%-20s|%-11s|\n", "So phong", "Loai phong","Gia phong","Trang thai");
+		printf("+--------+-------------------------+--------------------+-----------+\n");
+        for (int i = start; i < end && i < n; i++) {
+        	printf("|%8s|%25d|%16.0lf VND|%11d|\n", list[i].roomId, list[i].type, list[i].price, list[i].status);
 		}
-		printf("+--------+---------+----------+----------+\n");
-		fflush(stdin);
+		printf("+--------+-------------------------+--------------------+-----------+\n");
+		getchar();
 		printf ("Ban co muon thoat chuong trinh khong (y/n): ");
 		char charter = getchar();
 		if (charter == 'y' || charter == 'Y') {
 			break;
 		}
 	}
+}
+
+void search_room () {
+	int copyType;
+	int flag = 0;
+	while (copyType != 1 && copyType != 2) {
+		printf ("Nhap loai phong muon tim (1:Don, 2:Doi): ");
+		scanf ("%d",&copyType);
+		getchar();
+		if (copyType != 1 && copyType != 2) {
+			printf ("Loi: Vui long chon 1:Don hoac 2:Doi!\n");
+		}
+	}
+	for (int i = 0; i < n; i++) {
+		if (copyType == list[i].type && list[i].status == 0) {
+			flag = 1;
+		}
+	}
+	if (flag == 0) {
+		printf ("Hien tai khong co phong trong loai[Don/Doi]\n");
+		return;	
+	}
+	printf("+--------+-------------------------+--------------------+-----------+\n");
+	printf("|%-5s|%-25s|%-20s|%-11s|\n", "So phong", "Loai phong","Gia phong","Trang thai");
+	printf("+--------+-------------------------+--------------------+-----------+\n");
+	for(int i = 0; i < n; i++){
+		if(list[i].type == copyType && list[i].status == 0){
+			printf("|%-8s|%-25d|%16.0lf VND|%-11d|\n", list[i].roomId, list[i].type, list[i].price, list[i].status);
+		}
+	}
+	printf("+--------+-------------------------+--------------------+-----------+\n");
+}
+
+void sort_room () {
+	if (n == 0) {
+		printf ("Danh sach trong khong can sap xep");
+		return;
+	}
+	for (int i = 0; i < n - 1; i++) {
+		for (int j = 0; j < n -i - 1; j++) {
+			if (list[j].price < list[j+1].price) {
+				// sap xep gia
+				int temp01 = list[j].price;
+				list[j].price = list[j+1].price;
+				list[j+1].price = temp01;
+				// sap xep trang thai
+				int temp02 = list[j].status;
+				list[j].status = list[j+1].status;
+				list[j+1].status = temp02;
+				// sap xep loai phong
+				int temp03 = list[j].type;
+				list[j].type = list[j+1].type;
+				list[j+1].type = temp03;
+				// sap xep so phong
+				char temp04[5];
+				strcpy(temp04,list[j].roomId);
+				strcpy(list[j].roomId,list[j+1].roomId);
+				strcpy(list[j+1].roomId,temp04) ;
+			}
+		}
+	}
+	printf ("Da sap xep danh sach giam dan thanh cong\n");
+	show_list ();
 }
 
