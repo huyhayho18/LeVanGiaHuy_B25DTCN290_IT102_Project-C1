@@ -12,11 +12,18 @@ struct Room {
 
 // Cau truc booking
 struct Booking {
-	char bookId[20];
 	char roomId[5];
 	char customerName[50];
 	int day;
 	double totalCost;
+	char bookId[20];
+};
+
+// Cau truc ngay dat phong
+struct Date {
+	int day;
+	int month;
+	int year;
 };
 
 // Du lieu phong 
@@ -26,7 +33,7 @@ struct Room list[100] = {
 	{"103",1,400000,1},
 	{"104",2,750000,0},
 	{"105",1,400000,1},
-	{"106",2,750000,1},
+	{"106",2,750000,0},
 	{"107",1,400000,1},
 	{"201",2,750000,0},
 	{"202",1,400000,1},
@@ -34,18 +41,26 @@ struct Room list[100] = {
 	{"204",1,400000,1},
 	{"205",2,750000,0},
 	{"206",1,400000,1},
-	{"207",2,750000,1},
+	{"207",2,750000,0},
 	{"301",1,400000,1},
 	{"302",2,750000,0},
 	{"303",1,400000,1},
-	{"304",2,750000,1},
+	{"304",2,750000,0},
 	{"305",1,400000,1},
 	{"306",2,750000,0},
 };
 int n = 20;
 
 // Du lieu booking
-struct Booking listbooking;
+struct Booking listbooking[100] = {
+	{"104","Nguyen A", 3, 2250000}
+};
+int size = 1;
+// Du lieu ngay booking phong
+struct Date listdate[100] = {
+	{11, 10, 2025}
+};
+int len = 1;
 
 // Nguyen mau ham
 void display ();
@@ -56,6 +71,8 @@ void show_list ();
 void search_room ();
 void sort_room ();
 void check_in ();
+	int check_date (int day, int month, int year);
+void history_booking ();
 
 int main () {
 	int choice;
@@ -87,6 +104,7 @@ int main () {
 				check_in ();
 				break;
 			case 8:
+				history_booking ();
 				break;
 			case 9:
 				printf ("Thoat chuong trinh\n");
@@ -124,6 +142,10 @@ void add_Room () {
 		list[n].roomId[strcspn(list[n].roomId, "\n")] = 0;
 		if (strlen(list[n].roomId) == 0) {
 			printf ("Loi: So phong khong duoc de trong\n");
+			continue;
+		}
+		if (strcmp(list[n].roomId[1],"-") == 0) {
+			printf ("Loi: Phong[%s] khong the nhap dau - \n",list[n].roomId);
 			continue;
 		}
 		int valid = 1;
@@ -326,17 +348,17 @@ void sort_room () {
 	show_list ();
 }
 
+// Check in phong
 void check_in () {
-	int day, month, year;
 	int flag = 0;
 	while (1) {
 		int valid = 1;
 		flag = 0;
 		printf ("Nhap so phong muon dat: ");
-		fgets (listbooking.roomId, sizeof(listbooking.roomId), stdin);
-		listbooking.roomId[strcspn(listbooking.roomId,"\n")] = 0;
+		fgets (listbooking[size].roomId, sizeof(listbooking[size].roomId), stdin);
+		listbooking[size].roomId[strcspn(listbooking[size].roomId,"\n")] = 0;
 		for (int i = 0; i < n; i++) {
-			if (strcmp(listbooking.roomId,list[i].roomId) == 0){
+			if (strcmp(listbooking[size].roomId,list[i].roomId) == 0){
 				flag = 1;
 				if (list[i].status == 1) {
 					printf ("Loi: Phong [%s] da co khach!\n",list[i].roomId);
@@ -353,7 +375,7 @@ void check_in () {
 			}
 		}
 		if (flag == 0) {
-			printf ("Loi: Khong tim thay phong [%s]\n",listbooking.roomId);
+			printf ("Loi: Khong tim thay phong [%s]\n",listbooking[size].roomId);
 			valid = 0;
 			}
 		if (valid == 1) {
@@ -361,13 +383,13 @@ void check_in () {
 		}
 	}
 	printf ("Nhap ten khach hang: ");
-	fgets (listbooking.customerName, sizeof (listbooking.customerName), stdin);
-	listbooking.customerName[strcspn(listbooking.customerName, "\n")] = 0;
+	fgets (listbooking[size].customerName, sizeof (listbooking[size].customerName), stdin);
+	listbooking[size].customerName[strcspn(listbooking[size].customerName, "\n")] = 0;
 	while (1) {
 		printf ("Nhap so ngay o: ");
-		scanf ("%d",&listbooking.day);
+		scanf ("%d",&listbooking[size].day);
 		getchar();
-		if (listbooking.day <= 0) {
+		if (listbooking[size].day <= 0) {
 			printf ("Loi: So ngay o phai lon hon 0!\n");
 			continue;
 		}
@@ -375,29 +397,39 @@ void check_in () {
 	}
 	while (1) {
 		printf ("Nhap ngay nhan phong (DD/MM/YYYY): ");
-		scanf ("%d/%d/%d", &day, &month, &year);
+		scanf ("%d/%d/%d", &listdate[len].day, &listdate[len].month, &listdate[len].year);
 		getchar();
-		if (check_date (day, month, year) == 1) {
+		if (check_date (listdate[len].day, listdate[len].month, listdate[len].year) == 1) {
 			break;
 		}
 	}
-	sprintf(listbooking.bookId,"%d",rand() % 10000);      //in ra ngau nhien ma phong
-	printf ("Check in thanh cong! Ma dat phong [%d]\n",listbooking.bookId);
+	sprintf(listbooking[size].bookId,"%d",rand() % 10000);      //in ra ngau nhien ma phong
+	printf ("Check in thanh cong! Ma dat phong [%d]\n",listbooking[size].bookId);
 	for (int i = 0; i < n; i++) {
-		if (strcmp(listbooking.roomId,list[i].roomId) == 0) {
-			listbooking.totalCost = list[i].price * day;
+		if (strcmp(listbooking[size].roomId,list[i].roomId) == 0) {
+			listbooking[size].totalCost = list[i].price * listbooking[size].day;
 		}
 	}
 	printf ("+----------+-------------------------+------------+----------+---------------+\n"); // 10  25  12  10  15
 	printf ("|%-10s|%-25s|%-12s|%-10s|%-15s|\n","So phong","Ten khach hang","Ngay nhan","So ngay","Tong tien");
 	printf ("+----------+-------------------------+------------+----------+---------------+\n");
-	printf ("|%10s|%25s|%4d/%d/%d|%10d|%11.0lf VND|\n",listbooking.roomId,listbooking.customerName,day,month,year,listbooking.day,listbooking.totalCost);
+	printf ("|%10s|%25s|%4d/%d/%d|%10d|%11.0lf VND|\n",listbooking[size].roomId,listbooking[size].customerName,listdate[len].day,listdate[len].month,listdate[len].year,listbooking[size].day,listbooking[size].totalCost);
 	printf ("+----------+-------------------------+------------+----------+---------------+\n");
+	size ++;
+	len ++;
 }
 
-// kiem tra ngay thang nam
+// kiem tra ngay thang nam cua case 7
 int check_date (int day, int month, int year) {
 	
+	if (year < 2025) {
+		printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
+		return 0;
+	}
+	if (year = 2025 && month <= 11 && day < 27) {
+		printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
+		return 0;
+	}
 	if (month < 1 || month > 12) {
 		printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
 		return 0;
@@ -425,7 +457,7 @@ int check_date (int day, int month, int year) {
 			}
 			break;
 		case 2:
-			if (year % 4 == 0&&year % 100 != 0) {
+			if (year % 4 == 0&&year % 100 != 0 || year % 400 == 0) {  // kiem tra nam nhuan
 				if (day > 29 || day < 1) {
 					printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
 					return 0;
@@ -439,4 +471,47 @@ int check_date (int day, int month, int year) {
 			break;
 	}
 	return 1;
+}
+
+// Lich su check in
+void history_booking () {
+	char roomId[5];
+	int flag = 0;
+	int found = 0;
+	while (1) {
+		flag = 0;
+		printf ("Nhap so phong muon kiem tra lich su: ");
+		fgets (roomId, sizeof(roomId),stdin);
+		roomId[strcspn(roomId, "\n")] = 0;
+		for (int i = 0; i < n; i++) {
+			if (strcmp(list[i].roomId, roomId) == 0) {
+				flag = 1;
+				break;
+			}
+		}
+		if (flag == 0) {
+			printf ("Loi: Khong tim thay phong [%s]\n",roomId);
+			continue;
+		}
+		break;
+	}
+	while (1) {
+		for (int j = 0; j < size; j++) {
+			if (strcmp(listbooking[j].roomId, roomId) == 0) {
+				if (found == 0) {
+					printf ("+---+----------+-------------------------+------------+----------+---------------+\n"); // 10  25  12  10  15
+					printf ("|%-3s|%-10s|%-25s|%-12s|%-10s|%-15s|\n","STT","So phong","Ten khach hang","Ngay nhan","So ngay","Tong tien");
+					printf ("+---+----------+-------------------------+------------+----------+---------------+\n");
+				}
+				found = 1;
+				printf ("|%-3d|%10s|%25s|%4d/%d/%d|%10d|%11.0lf VND|\n",j+1,listbooking[j].roomId,listbooking[j].customerName,listdate[j].day,listdate[j].month,listdate[j].year,listbooking[j].day,listbooking[j].totalCost);
+				printf ("+---+----------+-------------------------+------------+----------+---------------+\n");	
+			}
+		}
+		if (found == 0) {
+			printf ("Phong [%s] chua tung co khach thue!\n",roomId);
+			continue;
+		}
+		break;
+	}
 }
