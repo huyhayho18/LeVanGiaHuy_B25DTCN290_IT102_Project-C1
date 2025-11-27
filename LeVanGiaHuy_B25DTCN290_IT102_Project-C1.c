@@ -377,7 +377,9 @@ void check_in () {
 		printf ("Nhap ngay nhan phong (DD/MM/YYYY): ");
 		scanf ("%d/%d/%d", &day, &month, &year);
 		getchar();
-		check_date (day, month, year);
+		if (check_date (day, month, year) == 1) {
+			break;
+		}
 	}
 	sprintf(listbooking.bookId,"%d",rand() % 10000);      //in ra ngau nhien ma phong
 	printf ("Check in thanh cong! Ma dat phong [%d]\n",listbooking.bookId);
@@ -394,41 +396,47 @@ void check_in () {
 }
 
 // kiem tra ngay thang nam
-void check_date (int day, int month, int year) {
+int check_date (int day, int month, int year) {
+	
 	if (month < 1 || month > 12) {
 		printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
-	} else {
-		switch (month) {
-			case 1:
-			case 3:
-			case 5:
-			case 7:
-			case 8:
-			case 10:
-			case 12:
-				if (day > 31 || day < 1) {
-					printf ("Loi: Ngày nhan phòng phai dung dinh dang DD/MM/YYYY!\n");
-				}
-				break;
-			case 4: 
-			case 6: 
-			case 9: 
-			case 11:
-				if (day > 30 || day < 1) {
-					printf ("Loi: Ngày nhan phòng phai dung dinh dang DD/MM/YYYY!\n");
-				}
-				break;
-			case 2:
-				if (year % 4 == 0&&year % 100 != 0) {
-					if (day > 29 || day < 1) {
-						printf ("Loi: Ngày nhan phòng phai dung dinh dang DD/MM/YYYY!\n");
-					}
-				} else {
-					if (day > 28 || day < 1) {
-						printf ("Loi: Ngày nhan phòng phai dung dinh dang DD/MM/YYYY!\n");
-					}
-				}
-				break;
-		}
+		return 0;
 	}
+	switch (month) {
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			if (day > 31 || day < 1) {
+				printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
+				return 0;
+			}
+			break;
+		case 4: 
+		case 6: 
+		case 9: 
+		case 11:
+			if (day > 30 || day < 1) {
+				printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
+				return 0;
+			}
+			break;
+		case 2:
+			if (year % 4 == 0&&year % 100 != 0) {
+				if (day > 29 || day < 1) {
+					printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
+					return 0;
+				}
+			} else {
+				if (day > 28 || day < 1) {
+					printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
+					return 0;
+				}
+			}		
+			break;
+	}
+	return 1;
 }
