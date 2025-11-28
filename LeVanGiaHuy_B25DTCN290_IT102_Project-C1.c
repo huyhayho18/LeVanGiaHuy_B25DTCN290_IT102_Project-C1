@@ -395,7 +395,7 @@ void check_in () {
 		fgets (listbooking[size].customerName, sizeof (listbooking[size].customerName), stdin);
 		listbooking[size].customerName[strcspn(listbooking[size].customerName, "\n")] = 0;
 		if (strlen(listbooking[size].customerName) == 0) {
-			printf ("Loi: So phong khong duoc de trong\n");
+			printf ("Loi: Ten khach hang khong duoc de trong\n");
 			continue;
 		}
 		break;
