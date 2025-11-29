@@ -174,7 +174,7 @@ void add_Room () {
 		break;
 	}
 	list[n].status = 0;
-	printf ("Them phong thanh cong! Phong [%s] da duoc tao voi trang thai rong\n",list[n-1].roomId);
+	printf ("Them phong thanh cong! Phong [%s] da duoc tao voi trang thai rong\n",list[n].roomId);
 	n++;
 };
 //cap nhat cac thong tin cua phong
@@ -291,7 +291,7 @@ void show_list () {
 }
 // Tim kiem phong trong
 void search_room () {
-	int copyType;
+	int copyType = 0;
 	int flag = 0;
 	while (copyType != 1 && copyType != 2) {
 		printf ("Nhap loai phong muon tim (1:Don, 2:Doi): ");
@@ -330,7 +330,7 @@ void sort_room () {
 		for (int j = 0; j < n -i - 1; j++) {
 			if (list[j].price < list[j+1].price) {
 				// sap xep gia
-				int temp01 = list[j].price;
+				double temp01 = list[j].price;
 				int temp02 = list[j].status;
 				int temp03 = list[j].type;
 				char temp04[5];
@@ -440,7 +440,7 @@ int check_date (int day, int month, int year) {
 		printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
 		return 0;
 	}
-	if (year = 2025 && month <= 11 && day < 28) {
+	if (year == 2025 && month <= 11 && day < 28) {
 		printf ("Loi: Ngay nhan phong phai dung dinh dang DD/MM/YYYY!\n");
 		return 0;
 	}
